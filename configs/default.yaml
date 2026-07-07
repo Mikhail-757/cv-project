@@ -1,0 +1,86 @@
+data:
+  dataset: coco
+  raw_dir: data/raw
+  processed_dir: data/processed
+  coco_year: "2017"
+  animal_classes:
+    - cat
+    - dog
+    - horse
+    - bird
+
+image:
+  input_size: 320
+  mean: [0.485, 0.456, 0.406]
+  std: [0.229, 0.224, 0.225]
+
+augmentations:
+  horizontal_flip: 0.5
+  color_jitter:
+    brightness: 0.3
+    contrast: 0.3
+    saturation: 0.3
+    hue: 0.1
+  random_crop:
+    scale: [0.8, 1.0]
+    ratio: [0.9, 1.1]
+
+training:
+  batch_size: 8
+  epochs: 5
+  optimizer: adam
+  learning_rate: 0.0005
+  weight_decay: 0.0005
+  scheduler: cosine
+  early_stopping_patience: 10
+  num_workers: 4
+  pin_memory: true
+
+models:
+  yolov8:
+    variant: yolov8n
+    pretrained: true
+    input_size: 320
+    conf_threshold: 0.25
+    iou_threshold: 0.45
+
+  faster_rcnn:
+    backbone: resnet50_fpn_v2
+    pretrained: true
+    input_size: 320
+    lr_backbone_factor: 0.1
+
+  ssd:
+    backbone: vgg16
+    pretrained: true
+    input_size: 256
+    lr_backbone_factor: 0.1
+
+  retinanet:
+    backbone: retinanet_resnet50_fpn_v2
+    pretrained: true
+    input_size: 320
+    lr_backbone_factor: 0.1
+
+  detr:
+    backbone: resnet50
+    hidden_dim: 128
+    num_heads: 8
+    num_encoder_layers: 2
+    num_decoder_layers: 2
+    num_queries: 100
+    pretrained_backbone: true
+    input_size: 320
+    lr_backbone_factor: 0.1
+
+evaluation:
+  iou_threshold: 0.5
+  iou_range: [0.5, 0.95]
+  iou_step: 0.05
+  confidence_threshold: 0.3
+
+results:
+  output_dir: results
+  plots_dir: results/plots
+  logs_dir: results/logs
+  checkpoints_dir: results/checkpoints
